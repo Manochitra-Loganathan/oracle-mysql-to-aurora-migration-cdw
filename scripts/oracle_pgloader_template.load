@@ -1,0 +1,13 @@
+LOAD DATABASE
+FROM oracle://username:password@//host:port/ORCL
+INTO postgresql://username:password@aurora-endpoint:5432/postgres
+
+WITH include no drop, create tables, create indexes, reset sequences,
+     data only, batch rows = 10000
+
+ALTER schema 'ORCL' rename to 'public';
+
+CAST type datetime to timestamptz;
+CAST type varchar when length > 255 to text;
+
+BEFORE LOAD DO $$ create schema if not exists public; $$;
